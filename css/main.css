@@ -1,3 +1,21 @@
+.app-row
+{
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  width: 1%;
+}
+
+.app-active
+{
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  width: 20%;
+}
+
 th{
  background-color: #42b983;
  color: rgba(255,255,255,0.66);
@@ -13,11 +31,11 @@ th, td {
  padding: 10px 20px;
 }
 
-th.active {
+th.sorter {
  color: #fff;
 }
 
-th.active .arrow {
+th.sorter .arrow {
   opacity: 1;
 }
 

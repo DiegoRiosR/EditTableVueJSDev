@@ -3,7 +3,10 @@
 <head>
 	<title></title>
 	<script src="https://unpkg.com/vue@2.1.9/dist/vue.js" type="text/javascript"></script>
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+	      rel="stylesheet"
+	      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+				crossorigin="anonymous">
 	<link rel="stylesheet" href="css/main.css">
 </head>
 <body>
@@ -39,16 +42,27 @@
 		<table class="table table-bordered table-hover table-striped">
 	 		<thead>
 	 				<tr>
-	 					 <th v-for="column in columns" :id="'col_'+column" :class="{ active: sortKey == column }">
-	 							{{ column }}
+	 					 <th v-for="column in columns"
+						     :id="'col_'+column"
+								 :class="{ sorter: sortKey == column }"
+								  @click="sortBy(column)"
+						 >
+	 					  	{{ column }}
 								<span class="arrow" :class="sortOrders[column] > 0 ? 'asc' : 'dsc'"> </span>
 	 					 </th>
 	 				</tr>
 	 		 </thead>
+			 <!-- <thead>
+			 	<tr>
+			 		 <th v-for="column in columns">
+						  <showup-search> </showup-search>
+					 </th>
+			 	</tr>
+			 </thead> -->
 			 <tbody>
 			 	 <tr v-for="data in filteredData">
-            <td v-for="key in columns" :id="'row_'+data[key].value">
-               <span v-if="data[key].span" @click="Edit(data[key], 'Nombre')">
+            <td v-for="key in columns" :id="'row_'+data[key].value" :class="'app-'+(data[key].short ? 'row' : 'active')">
+                <span v-if="data[key].span" @click="Edit(data[key])">
 								 {{ data[key].value }}
 							 </span>
 							 <showup-textbox :content="data" :row="key"></showup-textbox>
@@ -68,7 +82,15 @@
 						 style="width:100%">
 	</template>
 
+	<template id="txtSearch">
+		 <input type="text" class="form-control" style="width:100%">
+	</template>
+
 	<script  type="text/javascript">
+
+	    Vue.component("showup-search",{
+        template : '#txtSearch'
+		  });
 
 	    Vue.component("showup-table",{
 
@@ -99,8 +121,8 @@
 				      if (sortKey)
 							{
 				        data = data.slice().sort(function (a, b) {
-				          a = a[sortKey]
-				          b = b[sortKey]
+				          a = a[sortKey].value
+				          b = b[sortKey].value
 				          return (a === b ? 0 : a > b ? 1 : -1) * order
 				        })
 				      }
@@ -113,7 +135,7 @@
 				    this.sortKey = key
 				    this.sortOrders[key] = this.sortOrders[key] * -1
 				  },
-					 Edit: function(dato, field)
+					 Edit: function(dato)
 					 {
 						 dato.txt  = (dato.txt ? false : true);
 						 dato.span = (dato.span ? false : true);
@@ -173,26 +195,31 @@
 						{
                 Nombre : "Edit Table Vue App",
 
-                Columns : [ "CustNum" , "Nit", "Nombre", "Apellido" ],
+                Columns : [
+								            "CustNum" ,
+													  "Nit",
+														"Nombre",
+													  "Apellido"
+													],
 
             	  UserRegister : [
                   {
-                    CustNum: {value : "1", span : true} ,
-                  	Nit: { value : '1035415' , Type : "Number", txt : false, span : true } ,
-                  	Nombre: { value : "Diego" , Type : "String", txt : false, span : true } ,
-                  	Apellido: { value : "Rojas" , Type : "String", txt : false, span : true }
+                    CustNum: {value : 1, span : true, short: true} ,
+                  	Nit: { value: '1035415' , Type: "Number", txt: false, span: true, short: false } ,
+                  	Nombre: { value: "Diego" , Type: "String", txt: false, span: true, short: false } ,
+                  	Apellido: { value: "Rojas" , Type: "String", txt: false, span: true, short: false }
                   },
                   {
-                  	CustNum: {value : "2", span : true} ,
-                  	Nit: { value : '8888888' , Type : "Number", txt : false, span : true } ,
-                  	Nombre: { value : "Manolo" , Type : "String", txt : false, span : true },
-                  	Apellido: { value : "Rios" , Type : "String", txt : false, span : true }
+                  	CustNum: {value: 2, span: true,  short: true} ,
+                  	Nit: { value: '8888888' , Type: "Number", txt: false, span: true,  short: false } ,
+                  	Nombre: { value: "Manolo" , Type: "String", txt: false, span: true,  short: false },
+                  	Apellido: { value: "Rios" , Type: "String", txt: false, span: true,  short: false }
                   },
                   {
-                  	CustNum: {value : "3", span : true} ,
-                  	Nit: { value : '9999999' , Type : "Number", txt : false, span : true } ,
-                  	Nombre: { value : "Tori" , Type : "String", txt : false, span : true } ,
-                  	Apellido: { value : "Rios" , Type : "String", txt : false, span : true }
+                  	CustNum: {value: 3, span: true, short: true} ,
+                  	Nit: { value: '9999999' , Type: "Number", txt: false, span: true, short: false } ,
+                  	Nombre: { value: "Tori" , Type: "String", txt: false, span: true, short: false } ,
+                  	Apellido: { value: "Rios" , Type: "String", txt: false, span: true, short: false }
                   }
             	  ]
             },
