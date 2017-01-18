@@ -18,6 +18,8 @@
      	   </div>
      </div>
 
+		 <hr>
+
      <div class="row">
         <div class="col-sm-2"> </div>
 
@@ -43,29 +45,28 @@
 	 		<thead>
 	 				<tr>
 	 					 <th v-for="column in columns"
-						     :id="'col_'+column"
-								 :class="{ sorter: sortKey == column }"
-								  @click="sortBy(column)"
-						 >
-	 					  	{{ column }}
-								<span class="arrow" :class="sortOrders[column] > 0 ? 'asc' : 'dsc'"> </span>
+						     :id="'col_'+column.value"
+								 :class="{ sorter: sortKey == column.value }"
+								  @click="sortBy(column.value,column.Type)">
+	 					  	{{ column.value }}
+								<span class="arrow" :class="sortOrders[column.value] > 0 ? 'asc' : 'dsc'"> </span>
 	 					 </th>
 	 				</tr>
 	 		 </thead>
-			 <!-- <thead>
+			 <thead>
 			 	<tr>
 			 		 <th v-for="column in columns">
-						  <showup-search> </showup-search>
+						  <showup-search :row="column"> </showup-search>
 					 </th>
 			 	</tr>
-			 </thead> -->
+			 </thead>
 			 <tbody>
 			 	 <tr v-for="data in filteredData">
-            <td v-for="key in columns" :id="'row_'+data[key].value" :class="'app-'+(data[key].short ? 'row' : 'active')">
-                <span v-if="data[key].span" @click="Edit(data[key])">
-								 {{ data[key].value }}
-							 </span>
-							 <showup-textbox :content="data" :row="key"></showup-textbox>
+            <td v-for="(key , index) in columns" :id="'row_'+index" :class="'app-'+(key.short ? 'row' : 'active')">
+                <span v-if="data[key.value].span" @click="Edit(data[key.value])">
+								  {{ data[key.value].value }}
+							  </span>
+							  <showup-textbox :content="data" :row="key"></showup-textbox>
 						</td>
 			 	 </tr>
 			 </tbody>
@@ -74,22 +75,29 @@
 
 	<template id="txtMain">
 		  <input type="text"
-			       v-if="content[row].txt"
-			       :value="content[row].value"
-						 @mouseleave="leave(content[row], row, $event)"
-						 @keyup="NewData(content[row], row, $event)"
+			       v-if="content[row.value].txt"
+			       :value="content[row.value].value"
+						 @mouseleave="leave(content[row.value], row, $event)"
+						 @keyup="NewData(content[row.value], row, $event)"
 						 class="form-control"
-						 style="width:100%">
+						 style="width:106%; margin: -8px;">
 	</template>
 
 	<template id="txtSearch">
-		 <input type="text" class="form-control" style="width:100%">
+		 <input type="text"
+		        class="form-control"
+						style="width:100%; height:25px; font-size: 10px;"
+						v-if="row.filter"
+						:placeholder="row.value">
 	</template>
 
 	<script  type="text/javascript">
 
 	    Vue.component("showup-search",{
-        template : '#txtSearch'
+        template : '#txtSearch',
+				props:{
+					row: Object
+				}
 		  });
 
 	    Vue.component("showup-table",{
@@ -104,10 +112,11 @@
 					{
 					 var sortOrders = {}
 					 this.columns.forEach(function (key) {
-						 sortOrders[key] = 1
+						 sortOrders[key.value] = 1
 					 })
 					 return {
 						 sortKey: '',
+						 type: '',
 						 sortOrders: sortOrders
 					 }
 				 },
@@ -118,23 +127,26 @@
 				      var sortKey = this.sortKey
 				      var order = this.sortOrders[sortKey] || 1
 				      var data = this.data
-				      if (sortKey)
+							var type = this.type
+							if (sortKey)
 							{
-				        data = data.slice().sort(function (a, b) {
-				          a = a[sortKey].value
-				          b = b[sortKey].value
-				          return (a === b ? 0 : a > b ? 1 : -1) * order
-				        })
-				      }
+								data = data.slice().sort(function (a, b) {
+									a = type == "Number" ? parseInt(a[sortKey].value) : a[sortKey].value
+									b = type == "Number" ? parseInt(b[sortKey].value) : b[sortKey].value
+									return (a === b ? 0 : a > b ? 1 : -1) * order
+								})
+							}
 				      return data
 				    }
 				 },
 				 methods:
 				 {
-					 sortBy: function (key) {
+					 sortBy: function (key, type)
+					 {
 				    this.sortKey = key
+						this.type = type
 				    this.sortOrders[key] = this.sortOrders[key] * -1
-				  },
+				   },
 					 Edit: function(dato)
 					 {
 						 dato.txt  = (dato.txt ? false : true);
@@ -148,7 +160,7 @@
 				 template : '#txtMain',
 	     	 props: {
 						 content: Object,
-						 row: String
+						 row: Object
 					},
 					methods:
 					{
@@ -157,7 +169,7 @@
 							var oldNit = dato.value;
 							if( _evt.path[0].value.trim()  )
 							{
-								 dato.value = this.TypeValidation(dato.Type, _evt.path[0].value) ? _evt.path[0].value : oldNit;
+								 dato.value = this.TypeValidation(field.Type, _evt.path[0].value) ? _evt.path[0].value : oldNit;
 							}
 							else
 							{
@@ -168,7 +180,8 @@
 						},
 						NewData: function(dato , field ,_evt)
 						{
-							if( !this.TypeValidation( dato.Type , _evt.path[0].value ) )
+							//console.log(field);
+							if( !this.TypeValidation( field.Type , _evt.path[0].value ) )
 							{
 								alert("Solo se permiten números");
 							}
@@ -196,30 +209,30 @@
                 Nombre : "Edit Table Vue App",
 
                 Columns : [
-								            "CustNum" ,
-													  "Nit",
-														"Nombre",
-													  "Apellido"
-													],
+			            {value: "CustNum", short: true, Type: "Number",filter : true},
+								  {value: "Nit", short: false, Type: "Number",filter : true},
+									{value: "Nombre", short: false, Type: "String",filter : true},
+								  {value: "Apellido", short: false , Type: "String",filter : true}
+								],
 
             	  UserRegister : [
                   {
-                    CustNum: {value : 1, span : true, short: true} ,
-                  	Nit: { value: '1035415' , Type: "Number", txt: false, span: true, short: false } ,
-                  	Nombre: { value: "Diego" , Type: "String", txt: false, span: true, short: false } ,
-                  	Apellido: { value: "Rojas" , Type: "String", txt: false, span: true, short: false }
+                    CustNum: {value : 1, span : true} ,
+                  	Nit: { value: 1035415, txt: false, span: true } ,
+                  	Nombre: { value: "Diego", txt: false, span: true } ,
+                  	Apellido: { value: "Rojas", txt: false, span: true }
                   },
                   {
-                  	CustNum: {value: 2, span: true,  short: true} ,
-                  	Nit: { value: '8888888' , Type: "Number", txt: false, span: true,  short: false } ,
-                  	Nombre: { value: "Manolo" , Type: "String", txt: false, span: true,  short: false },
-                  	Apellido: { value: "Rios" , Type: "String", txt: false, span: true,  short: false }
+                  	CustNum: {value: 2, span: true} ,
+                  	Nit: { value: 8888888, txt: false, span: true } ,
+                  	Nombre: { value: "Manolo", txt: false, span: true },
+                  	Apellido: { value: "Rios", txt: false, span: true }
                   },
                   {
-                  	CustNum: {value: 3, span: true, short: true} ,
-                  	Nit: { value: '9999999' , Type: "Number", txt: false, span: true, short: false } ,
-                  	Nombre: { value: "Tori" , Type: "String", txt: false, span: true, short: false } ,
-                  	Apellido: { value: "Rios" , Type: "String", txt: false, span: true, short: false }
+                  	CustNum: {value: 3, span: true} ,
+                  	Nit: { value: 9999999, txt: false, span: true } ,
+                  	Nombre: { value: "Tori", txt: false, span: true } ,
+                  	Apellido: { value: "Rios", txt: false, span: true }
                   }
             	  ]
             },
