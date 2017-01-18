@@ -16,7 +16,14 @@
   width: 20%;
 }
 
-th{
+.pagination {
+    display: inline-block;
+    padding-left: 0px;
+    margin: 11px 10px;
+    border-radius: 4px;
+}
+
+th, .showup-footer{
  background-color: #42b983;
  color: rgba(255,255,255,0.66);
  cursor: pointer;
@@ -24,6 +31,15 @@ th{
  -moz-user-select: none;
  -ms-user-select: none;
  user-select: none;
+}
+
+.showup-footer{
+  margin-top: -20px;
+  position: relative;
+}
+
+.showup-table{
+  margin-bottom: :20px;
 }
 
 th, td {

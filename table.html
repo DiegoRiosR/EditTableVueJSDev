@@ -2,11 +2,8 @@
 <html>
 <head>
 	<title></title>
-	<script src="https://unpkg.com/vue@2.1.9/dist/vue.js" type="text/javascript"></script>
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-	      rel="stylesheet"
-	      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-				crossorigin="anonymous">
+	<script type="text/javascript"  src="js/vue.js"></script>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/main.css">
 </head>
 <body>
@@ -33,49 +30,63 @@
      </div>
 
 		 <hr>
-
-     <pre>
+     <!-- <pre class="text-center">
       {{ UserRegister }}
-     </pre>
+     </pre> -->
 
   </div>
 
 	<template id="TableMain">
-		<table class="table table-bordered table-hover table-striped">
-	 		<thead>
-	 				<tr>
-	 					 <th v-for="column in columns"
-						     :id="'col_'+column.value"
-								 :class="{ sorter: sortKey == column.value }"
-								  @click="sortBy(column.value,column.Type)">
-	 					  	{{ column.value }}
-								<span class="arrow" :class="sortOrders[column.value] > 0 ? 'asc' : 'dsc'"> </span>
-	 					 </th>
-	 				</tr>
-	 		 </thead>
-			 <thead>
-			 	<tr>
-			 		 <th v-for="column in columns">
-						  <showup-search :row="column"> </showup-search>
-					 </th>
-			 	</tr>
-			 </thead>
-			 <tbody>
-			 	 <tr v-for="data in filteredData">
-            <td v-for="(key , index) in columns" :id="'row_'+index" :class="'app-'+(key.short ? 'row' : 'active')">
-                <span v-if="data[key.value].span" @click="Edit(data[key.value])">
-								  {{ data[key.value].value }}
-							  </span>
-							  <showup-textbox :content="data" :row="key"></showup-textbox>
-						</td>
-			 	 </tr>
-			 </tbody>
- 	  </table>
+		<div class="">
+			<div class="">
+					<table class="table table-bordered table-hover table-striped showup-table">
+				 		<thead>
+				 				<tr>
+				 					 <th v-for="column in columns"
+									     :id="'col_'+column.value"
+											 :class="{ sorter: sortKey == column.value }"
+											  @click="sortBy(column.value,column.Type)">
+				 					  	{{ column.value }}
+											<span class="arrow" :class="sortOrders[column.value] > 0 ? 'asc' : 'dsc'"> </span>
+				 					 </th>
+				 				</tr>
+				 		 </thead>
+						 <thead>
+						 	<tr>
+						 		 <th v-for="column in columns">
+									  <showup-search :row="column"> </showup-search>
+								 </th>
+						 	</tr>
+						 </thead>
+						 <tbody>
+						 	 <tr v-for="data in filteredData">
+			            <td v-for="(key , index) in columns" :id="'row_'+index" :class="'app-'+(key.short ? 'row' : 'active')">
+			                <span v-show="data[key.value].span" @click="Edit(data[key.value])">
+											  {{ data[key.value].value }}
+										  </span>
+										  <showup-textbox :content="data" :row="key"></showup-textbox>
+									</td>
+						 	 </tr>
+						 </tbody>
+			 	  </table>
+				</div>
+				<div class="">
+					<div class="text-right showup-footer">
+						<nav aria-label="Page navigation">
+						 <ul class="pagination">
+							   <li v-for="page in TotalGrid">
+									 <a href="javascript:void(0)"  @click="setPage(page)">{{page}}</a>
+								 </li>
+						 </ul>
+					 </nav>
+					</div>
+				</div>
+		</div>
 	</template>
 
 	<template id="txtMain">
 		  <input type="text"
-			       v-if="content[row.value].txt"
+			       v-show="content[row.value].txt"
 			       :value="content[row.value].value"
 						 @mouseleave="leave(content[row.value], row, $event)"
 						 @keyup="NewData(content[row.value], row, $event)"
@@ -87,7 +98,7 @@
 		 <input type="text"
 		        class="form-control"
 						style="width:100%; height:25px; font-size: 10px;"
-						v-if="row.filter"
+						v-show="row.filter"
 						:placeholder="row.value">
 	</template>
 
@@ -117,6 +128,9 @@
 					 return {
 						 sortKey: '',
 						 type: '',
+						 currentPage: 0,
+						 itemsPerPage: 2,
+						 totalD: 0,
 						 sortOrders: sortOrders
 					 }
 				 },
@@ -124,23 +138,47 @@
 				 {
 				    filteredData: function ()
 						{
+							// Sorter
 				      var sortKey = this.sortKey
 				      var order = this.sortOrders[sortKey] || 1
 				      var data = this.data
 							var type = this.type
+							this.totalD = data.length;
+
 							if (sortKey)
 							{
 								data = data.slice().sort(function (a, b) {
 									a = type == "Number" ? parseInt(a[sortKey].value) : a[sortKey].value
 									b = type == "Number" ? parseInt(b[sortKey].value) : b[sortKey].value
 									return (a === b ? 0 : a > b ? 1 : -1) * order
-								})
+								});
 							}
-				      return data
-				    }
+
+							if (this.currentPage >= this.totalPages())
+							{
+				        this.currentPage = Math.max(0, this.totalPages() - 1);
+				      }
+							var index = this.currentPage * this.itemsPerPage;
+
+							data = data.slice(index, index + this.itemsPerPage);
+
+							return data
+				    },
+						TotalGrid: function(){
+							return this.totalPages()
+						}
 				 },
 				 methods:
 				 {
+					 totalPages: function()
+					 {
+						 console.log(Math.ceil(this.totalD / this.itemsPerPage) + " totalPages");
+			       return Math.ceil(this.totalD / this.itemsPerPage);
+					 },
+					 setPage: function(pageNumber) {
+			       this.currentPage = pageNumber;
+			       console.log(pageNumber);
+			     },
 					 sortBy: function (key, type)
 					 {
 				    this.sortKey = key
@@ -153,7 +191,6 @@
 						 dato.span = (dato.span ? false : true);
 					 }
 				 }
-
 		  });
 
 	    Vue.component("showup-textbox" ,{
@@ -200,22 +237,22 @@
 					}
       });
 
-		  new Vue({
+		  var Showup = new Vue({
 
             el: '#tblMain',
 
             data :
 						{
-                Nombre : "Edit Table Vue App",
+                Nombre: "Edit Table Vue App",
 
-                Columns : [
+                Columns: [
 			            {value: "CustNum", short: true, Type: "Number",filter : true},
 								  {value: "Nit", short: false, Type: "Number",filter : true},
 									{value: "Nombre", short: false, Type: "String",filter : true},
 								  {value: "Apellido", short: false , Type: "String",filter : true}
 								],
 
-            	  UserRegister : [
+            	  UserRegister: [
                   {
                     CustNum: {value : 1, span : true} ,
                   	Nit: { value: 1035415, txt: false, span: true } ,
@@ -235,7 +272,7 @@
                   	Apellido: { value: "Rios", txt: false, span: true }
                   }
             	  ]
-            },
+            }
 		 });
 	</script>
 </body>
