@@ -33,6 +33,34 @@ th, .showup-footer{
  user-select: none;
 }
 
+.showup-filter{
+ background-color: #42b983;
+ margin-bottom: -11px;
+ color: rgba(255,255,255,0.66);
+ -webkit-user-select: none;
+ -moz-user-select: none;
+ -ms-user-select: none;
+ user-select: none;
+ height: 39px;
+ padding: 10px;
+ overflow: hidden;
+}
+
+select{
+  -webkit-appearance: menulist;
+  box-sizing: border-box;
+  align-items: center;
+  white-space: pre;
+  -webkit-rtl-ordering: logical;
+  color: black;
+  background-color: white;
+  cursor: default;
+  border-width: 1px;
+  border-style: solid;
+  border-color: initial;
+  border-image: initial;
+}
+
 .showup-footer{
   margin-top: -20px;
   position: relative;

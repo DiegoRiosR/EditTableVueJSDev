@@ -1,0 +1,136 @@
+<style media="screen">
+a {
+color: #999;
+}
+.current {
+color: red;
+}
+ul {
+padding: 0;
+list-style-type: none;
+}
+li {
+display: inline;
+margin: 5px 5px;
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.16/vue.js"></script>
+<div id="demoList">
+<div class="containerTable">
+  <table class="table">
+    <thead>
+      <tr class="header">
+        <th>
+          <div><a>Provider</a>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="item in items | paginate">
+        <td>{{item.name}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<ul>
+  <li v-for="pageNumber in totalPages">
+    <a href="{{ pageNumber }}" @click="setPage(pageNumber)">{{ pageNumber + 1 }}</a>
+  </li>
+</ul>
+</div>
+<script type="text/javascript">
+var demoList = new Vue({
+el: '#demoList',
+data: {
+  items: [{
+    "id": 1,
+    "name": "Tom"
+  }, {
+    "id": 2,
+    "name": "Kate"
+  }, {
+    "id": 3,
+    "name": "Jack"
+  }, {
+    "id": 4,
+    "name": "Jill"
+  }, {
+    "id": 5,
+    "name": "aa"
+  }, {
+    "id": 6,
+    "name": "bb"
+  }, {
+    "id": 7,
+    "name": "cc"
+  }, {
+    "id": 8,
+    "name": "dd"
+  }, {
+    "id": 1,
+    "name": "Tom"
+  }, {
+    "id": 2,
+    "name": "Kate"
+  }, {
+    "id": 3,
+    "name": "Jack"
+  }, {
+    "id": 4,
+    "name": "Jill"
+  }, {
+    "id": 5,
+    "name": "aa"
+  }, {
+    "id": 6,
+    "name": "bb"
+  }, {
+    "id": 7,
+    "name": "cc"
+  }, {
+    "id": 8,
+    "name": "dd"
+  }, ],
+  loading: false,
+  order: 1,
+  searchText: null,
+  ccn: null,
+  currentPage: 0,
+  itemsPerPage: 2,
+  resultCount: 0
+},
+computed: {
+  totalPages: function() {
+    console.log( Math.ceil(this.resultCount / this.itemsPerPage) + " totalPages DR" );
+    return Math.ceil(this.resultCount / this.itemsPerPage);
+
+  }
+},
+methods: {
+  setPage: function(pageNumber) {
+    this.currentPage = pageNumber;
+    console.log(pageNumber);
+  }
+},
+filters: {
+  paginate: function(list)
+   {
+    console.log("HI");
+    this.resultCount = this.items.length;
+    // console.log(this.resultCount + " Result count");
+    // console.log(this.currentPage + " current page");
+    // console.log(this.itemsPerPage + " items per page");
+    // console.log(this.totalPages + " Total pages 2");
+
+    if (this.currentPage >= this.totalPages) {
+      this.currentPage = Math.max(0, this.totalPages - 1);
+    }
+    var index = this.currentPage * this.itemsPerPage;
+    console.log(index + " index");
+    console.log(this.items.slice(index, index + this.itemsPerPage));
+    return this.items.slice(index, index + this.itemsPerPage);
+  }
+}
+});
+</script>
