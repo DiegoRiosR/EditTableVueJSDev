@@ -1,0 +1,82 @@
+.app-row
+{
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  width: 1%;
+}
+
+.app-active
+{
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  width: 20%;
+}
+
+.pagination {
+    display: inline-block;
+    padding-left: 0px;
+    margin: 11px 10px;
+    border-radius: 4px;
+}
+
+/*#42b983  green*/
+/*#c0392b red*/
+/*#f39c12 oranfe*/
+/*#2980b9 blue*/
+
+select{
+  -webkit-appearance: menulist;
+  box-sizing: border-box;
+  align-items: center;
+  white-space: pre;
+  -webkit-rtl-ordering: logical;
+  color: black;
+  background-color: white;
+  cursor: default;
+  border-width: 1px;
+  border-style: solid;
+  border-color: initial;
+  border-image: initial;
+}
+
+.showup-table{
+  margin-bottom: :20px;
+}
+
+th, td {
+ min-width: 120px;
+ padding: 10px 20px;
+}
+
+th.sorter {
+ color: #fff;
+}
+
+th.sorter .arrow {
+  opacity: 1;
+}
+
+.arrow {
+  display: inline-block;
+  vertical-align: middle;
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+  opacity: 0.66;
+}
+
+.arrow.asc {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid #fff;
+}
+
+.arrow.dsc {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #fff;
+}
