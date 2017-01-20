@@ -17,16 +17,24 @@
 
      <hr>
 
-	    <center><input type="text" v-model="estilo"></center>
+	    <div class="row">
+				 <div class="col-md-4 col-md-offset-4">
+					 <select class="form-control"  v-model="Colour">
+							<option value="#42b983">Green</option>
+							<option value="#ea6153">Red</option>
+							<option value="#f39c12">Orange</option>
+							<option value="#2980b9">Blue</option>
+						</select>
+			   </div>
+	   </div>
 
 		 <hr>
 
      <div class="row">
-        <div class="col-sm-2"> </div>
 
-        <div class="col-sm-8">
+        <div class="col-md-10 col-md-offset-1">
           <div class="table-responsive">
-						 <showup-table :data="UserRegister" :columns="Columns" :styles="estilo"></showup-table>
+						 <showup-table :data="UserRegister" :columns="Columns" :colour="Colour"></showup-table>
 		      </div>
 	      </div>
 
@@ -38,7 +46,7 @@
 
 	<template id="TableMain">
 		<div class="">
-			<div :class="'showup-filter-'+styles">
+			<div :style="heading">
 				<div style="float:left;">
 					Mostrar
 					 <select v-model="itemsPerPage" @change="change(itemsPerPage)">
@@ -61,7 +69,7 @@
 									     :id="'col_'+column.value"
 											 :class="{ sorter: sortKey == column.value }"
 											 @click="sortBy(column.value,column.Type)"
-											 style="border: 1px solid #42b983;">
+											 :style="footer">
 				 					  	 {{ column.value }}
 											<span class="arrow" :class="sortOrders[column.value] > 0 ? 'asc' : 'dsc'"> </span>
 				 					 </th>
@@ -80,7 +88,7 @@
 			 	  </table>
 				</div>
 				<div class="">
-					<div :class="'text-right showup-footer-'+styles">
+					<div class="text-right" :style="footer">
 						<nav aria-label="Page navigation">
 						 <ul class="pagination pagination-sm">
 							   <li v-for="page in totalPages" :class="{active: currentPage == page - 1}">
@@ -115,7 +123,7 @@
 					{
 						 data: Array,
 						 columns: Array,
-						 styles: String
+						 colour: String
 					},
 					data: function ()
 					{
@@ -130,8 +138,33 @@
 						 currentPage: 0,
 						 filterKey: '',
 						 itemsPerPage: 4,
-						 resultCount: 0
-					 }
+						 resultCount: 0,
+						 "showup_footer":
+						 {
+							background: '',
+							color: "rgba(255,255,255,0.66)",
+							cursor: "pointer",
+							"-webkit-user-select": "none",
+							"-moz-user-select": "none",
+							"-ms-user-select": "none",
+							"user-select": "none",
+							"margin-top": "-20px",
+							position: "relative",
+							border:''
+					   },
+						 "showup_filter":
+						 {
+							 "background": '',
+							 color: 'rgba(255,255,255,0.66)',
+							 "-webkit-user-select": 'none',
+							 "-moz-user-select": 'none',
+							 "-ms-user-select": 'none',
+							 "user-select": 'none',
+							 height: '39px',
+							 padding: '10px',
+							 overflow: 'hidden',
+						 },
+					   }
 				 },
 				 computed:
 				 {
@@ -170,8 +203,21 @@
 
 							return data
 				    },
-						totalPages: function() {
+						totalPages: function()
+						{
 							return Math.ceil(this.resultCount / this.itemsPerPage);
+						},
+						footer: function()
+						{
+							this.showup_footer.background= this.colour
+							this.showup_footer.border=" 1px solid "+this.colour
+							return this.showup_footer
+						},
+
+						heading: function()
+						{
+							this.showup_filter.background= this.colour
+							 return this.showup_filter
 						}
 				 },
 				 methods:
@@ -249,7 +295,7 @@
 						{
                 Nombre: "Edit Table Vue App",
 
-								estilo: "blue",
+								Colour: "#2980b9",
 
                 Columns: [
 			            {value: "CustNum", short: true, Type: "Number",filter : true},
