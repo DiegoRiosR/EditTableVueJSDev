@@ -33,7 +33,18 @@ th, .showup-footer-green{
  user-select: none;
 }
 
-th, .showup-footer-blue{
+.th-green{
+  background-color: #42b983;
+  color: rgba(255,255,255,0.66);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+
+.showup-footer-blue{
  background-color: #2980b9;
  color: rgba(255,255,255,0.66);
  cursor: pointer;
@@ -43,7 +54,7 @@ th, .showup-footer-blue{
  user-select: none;
 }
 
-th, .showup-footer-red{
+.showup-footer-red{
  background-color: #c0392b;
  color: rgba(255,255,255,0.66);
  cursor: pointer;
@@ -53,7 +64,7 @@ th, .showup-footer-red{
  user-select: none;
 }
 
-th, .showup-footer-orange{
+.showup-footer-orange{
  background-color: #f39c12;
  color: rgba(255,255,255,0.66);
  cursor: pointer;
