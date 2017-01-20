@@ -76,7 +76,7 @@
 				 				</tr>
 				 		 </thead>
 						 <tbody>
-						 	 <tr v-for="data in filteredData">
+						 	 <tr v-if="filteredData.length > 0" v-for="data in filteredData">
 			            <td v-for="(key , index) in columns" :id="'row_'+index" :class="'app-'+(key.short ? 'row' : 'active')">
 			                <span v-show="data[key.value].span" @click="Edit(data[key.value])">
 											  {{ data[key.value].value }}
@@ -84,6 +84,9 @@
 										  <showup-textbox :content="data" :row="key"></showup-textbox>
 									</td>
 						 	 </tr>
+							 <tr v-if="filteredData.length == 0">
+								  <td :colspan="columns.length"> <div class="text-center">NO DATA FILTER</div> </td>
+							 </tr>
 						 </tbody>
 			 	  </table>
 				</div>
@@ -293,7 +296,7 @@
 
             data :
 						{
-                Nombre: "Edit Table Vue App",
+                Nombre: "DataGrid Edit VueJS App",
 
 								Colour: "#2980b9",
 
