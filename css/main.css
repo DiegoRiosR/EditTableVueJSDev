@@ -23,8 +23,18 @@
     border-radius: 4px;
 }
 
-th, .showup-footer{
+th, .showup-footer-green{
  background-color: #42b983;
+ color: rgba(255,255,255,0.66);
+ cursor: pointer;
+ -webkit-user-select: none;
+ -moz-user-select: none;
+ -ms-user-select: none;
+ user-select: none;
+}
+
+th, .showup-footer-blue{
+ background-color: #2980b9;
  color: rgba(255,255,255,0.66);
  cursor: pointer;
  -webkit-user-select: none;
@@ -34,7 +44,7 @@ th, .showup-footer{
 }
 
 th, .showup-footer-red{
- background-color: #42b983;
+ background-color: #c0392b;
  color: rgba(255,255,255,0.66);
  cursor: pointer;
  -webkit-user-select: none;
@@ -43,7 +53,18 @@ th, .showup-footer-red{
  user-select: none;
 }
 
-.showup-filter{
+th, .showup-footer-orange{
+ background-color: #f39c12;
+ color: rgba(255,255,255,0.66);
+ cursor: pointer;
+ -webkit-user-select: none;
+ -moz-user-select: none;
+ -ms-user-select: none;
+ user-select: none;
+}
+
+/*#42b983*/
+.showup-filter-green{
  background-color: #42b983;
  margin-bottom: -11px;
  color: rgba(255,255,255,0.66);
@@ -54,7 +75,54 @@ th, .showup-footer-red{
  height: 39px;
  padding: 10px;
  overflow: hidden;
+ width: 99.8%;
 }
+
+/*#2980b9*/
+.showup-filter-blue{
+ background-color: #2980b9;
+ margin-bottom: -11px;
+ color: rgba(255,255,255,0.66);
+ -webkit-user-select: none;
+ -moz-user-select: none;
+ -ms-user-select: none;
+ user-select: none;
+ height: 39px;
+ padding: 10px;
+ overflow: hidden;
+ width: 99.8%;
+}
+
+/*#c0392b*/
+.showup-filter-red{
+ background-color: #c0392b;
+ margin-bottom: -11px;
+ color: rgba(255,255,255,0.66);
+ -webkit-user-select: none;
+ -moz-user-select: none;
+ -ms-user-select: none;
+ user-select: none;
+ height: 39px;
+ padding: 10px;
+ overflow: hidden;
+ width: 99.8%;
+}
+
+/*#f39c12*/
+.showup-filter-orange{
+ background-color: #f39c12;
+ margin-bottom: -11px;
+ color: rgba(255,255,255,0.66);
+ -webkit-user-select: none;
+ -moz-user-select: none;
+ -ms-user-select: none;
+ user-select: none;
+ height: 39px;
+ padding: 10px;
+ overflow: hidden;
+ width: 99.8%;
+}
+
 
 select{
   -webkit-appearance: menulist;
@@ -71,7 +139,22 @@ select{
   border-image: initial;
 }
 
-.showup-footer{
+.showup-footer-green{
+  margin-top: -20px;
+  position: relative;
+}
+
+.showup-footer-blue{
+  margin-top: -20px;
+  position: relative;
+}
+
+.showup-footer-red{
+  margin-top: -20px;
+  position: relative;
+}
+
+.showup-footer-orange{
   margin-top: -20px;
   position: relative;
 }

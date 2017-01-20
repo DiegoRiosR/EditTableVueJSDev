@@ -15,6 +15,10 @@
      	   </div>
      </div>
 
+     <hr>
+
+	    <center><input type="text" v-model="estilo"></center>
+
 		 <hr>
 
      <div class="row">
@@ -22,7 +26,7 @@
 
         <div class="col-sm-8">
           <div class="table-responsive">
-						 <showup-table :data="UserRegister" :columns="Columns"></showup-table>
+						 <showup-table :data="UserRegister" :columns="Columns" :styles="estilo"></showup-table>
 		      </div>
 	      </div>
 
@@ -34,7 +38,7 @@
 
 	<template id="TableMain">
 		<div class="">
-			<div class="showup-filter">
+			<div :class="'showup-filter-'+styles">
 				<div style="float:left;">
 					Mostrar
 					 <select v-model="itemsPerPage" @change="change(itemsPerPage)">
@@ -56,9 +60,9 @@
 				 					 <th v-for="column in columns"
 									     :id="'col_'+column.value"
 											 :class="{ sorter: sortKey == column.value }"
-											  @click="sortBy(column.value,column.Type)"
-												style="border: 1px solid #42b983;">
-				 					  	{{ column.value }}
+											 @click="sortBy(column.value,column.Type)"
+											 style="border: 1px solid #42b983;">
+				 					  	 {{ column.value }}
 											<span class="arrow" :class="sortOrders[column.value] > 0 ? 'asc' : 'dsc'"> </span>
 				 					 </th>
 				 				</tr>
@@ -76,7 +80,7 @@
 			 	  </table>
 				</div>
 				<div class="">
-					<div class="text-right showup-footer">
+					<div :class="'text-right showup-footer-'+styles">
 						<nav aria-label="Page navigation">
 						 <ul class="pagination pagination-sm">
 							   <li v-for="page in totalPages" :class="{active: currentPage == page - 1}">
@@ -110,7 +114,8 @@
 					props:
 					{
 						 data: Array,
-						 columns: Array
+						 columns: Array,
+						 styles: String
 					},
 					data: function ()
 					{
@@ -243,6 +248,8 @@
             data :
 						{
                 Nombre: "Edit Table Vue App",
+
+								estilo: "blue",
 
                 Columns: [
 			            {value: "CustNum", short: true, Type: "Number",filter : true},
