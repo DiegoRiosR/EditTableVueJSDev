@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Table VueJS</title>
+	<script type="text/javascript"  src="js/vue.js"></script>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <div class="row" id="tblMain">
+
+     <div class="row">
+     	   <div class="cal-sm-12">
+     	 	  <center> <h3>{{Nombre}}</h3> </center>
+     	   </div>
+     </div>
+
+     <hr>
+
+	    <div class="row">
+				 <div class="col-md-4 col-md-offset-4">
+					 <select class="form-control"  v-model="Colour">
+							<option value="#42b983">Green</option>
+							<option value="#ea6153">Red</option>
+							<option value="#f39c12">Orange</option>
+							<option value="#2980b9">Blue</option>
+						</select>
+			   </div>
+	   </div>
+
+		 <hr>
+
+     <div class="row">
+
+        <div class="col-md-10 col-md-offset-1">
+          <div class="table-responsive">
+						 <showup-table :data="UserRegister" :columns="Columns" :colour="Colour"></showup-table>
+		      </div>
+	      </div>
+
+     </div>
+
+		 <hr>
+
+  </div>
+
+	<template id="TableMain">
+		<div class="">
+			<div :style="heading">
+				<div style="float:left;">
+					Mostrar
+					 <select v-model="itemsPerPage" @change="change(itemsPerPage)">
+						 <option value="4">4</option>
+						 <option value="25">25</option>
+						 <option value="100">100</option>
+						 <option value="10000">All</option>
+					 </select>
+					 Entradas
+				</div>
+				<div style="float:right;">
+					<input type="text" v-model="filterKey" class="form-control" style="width:100%; height:25px; font-size: 10px;" placeholder="Buscar...">
+				</div>
+      </div>
+			<div class="">
+					<table class="table table-bordered table-hover table-striped showup-table">
+				 		<thead>
+				 				<tr style="border: 1px solid #42b983;">
+				 					 <th v-for="column in columns"
+									     :id="'col_'+column.value"
+											 :class="{ sorter: sortKey == column.value }"
+											 @click="sortBy(column.value,column.Type)"
+											 :style="footer">
+				 					  	 {{ column.value }}
+											<span class="arrow" :class="sortOrders[column.value] > 0 ? 'asc' : 'dsc'"> </span>
+				 					 </th>
+				 				</tr>
+				 		 </thead>
+						 <tbody>
+						 	 <tr v-if="filteredData.length > 0" v-for="data in filteredData">
+			            <td v-for="(key , index) in columns" :id="'row_'+index" :class="'app-'+(key.short ? 'row' : 'active')">
+			                <span v-show="data[key.value].span" @click="Edit(data[key.value])">
+											  {{ data[key.value].value }}
+										  </span>
+										  <showup-textbox :content="data" :row="key"></showup-textbox>
+									</td>
+						 	 </tr>
+							 <tr v-if="filteredData.length == 0">
+								  <td :colspan="columns.length"> <div class="text-center">NO DATA FILTER</div> </td>
+							 </tr>
+						 </tbody>
+			 	  </table>
+				</div>
+				<div class="">
+					<div class="text-right" :style="footer">
+						<nav aria-label="Page navigation">
+						 <ul class="pagination pagination-sm">
+							   <li v-for="page in totalPages" :class="{active: currentPage == page - 1}">
+									 <a href="javascript:void(0)"  @click="setPage(page -1)">
+										 {{page}}
+									 </a>
+								 </li>
+						 </ul>
+					 </nav>
+					</div>
+				</div>
+		</div>
+	</template>
+
+	<template id="txtMain">
+		  <input type="text"
+			       v-show="content[row.value].txt"
+			       :value="content[row.value].value"
+						 @mouseleave="leave(content[row.value], row, $event)"
+						 @keyup="NewData(content[row.value], row, $event)"
+						 class="form-control"
+						 style="width:106%; margin: -8px;">
+	</template>
+
+	<script  type="text/javascript">
+
+	    Vue.component("showup-table",{
+
+				  template: "#TableMain",
+
+					props:
+					{
+						 data: Array,
+						 columns: Array,
+						 colour: String
+					},
+					data: function ()
+					{
+					 var sortOrders = {}
+					 this.columns.forEach(function (key) {
+						 sortOrders[key.value] = 1
+					 })
+					 return {
+						 sortKey: '',
+						 type: '',
+						 sortOrders: sortOrders,
+						 currentPage: 0,
+						 filterKey: '',
+						 itemsPerPage: 4,
+						 resultCount: 0,
+						 "showup_footer":
+						 {
+							background: '',
+							color: "rgba(255,255,255,0.66)",
+							cursor: "pointer",
+							"-webkit-user-select": "none",
+							"-moz-user-select": "none",
+							"-ms-user-select": "none",
+							"user-select": "none",
+							"margin-top": "-20px",
+							position: "relative",
+							border:''
+					   },
+						 "showup_filter":
+						 {
+							 "background": '',
+							 color: 'rgba(255,255,255,0.66)',
+							 "-webkit-user-select": 'none',
+							 "-moz-user-select": 'none',
+							 "-ms-user-select": 'none',
+							 "user-select": 'none',
+							 height: '39px',
+							 padding: '10px',
+							 overflow: 'hidden',
+						 },
+					   }
+				 },
+				 computed:
+				 {
+				    filteredData: function ()
+						{
+							// Sorter
+				      var sortKey = this.sortKey
+				      var order = this.sortOrders[sortKey] || 1
+							var filterKey = this.filterKey && this.filterKey.toLowerCase()
+				      var data = this.data
+							var type = this.type
+							this.resultCount = data.length
+							if (filterKey) {
+								data = data.filter(function (row) {
+									return Object.keys(row).some(function (key) {
+										return String(row[key].value).toLowerCase().indexOf(filterKey) > -1
+									})
+								})
+							}
+							if (sortKey)
+							{
+								data = data.slice().sort(function (a, b) {
+									a = type == "Number" ? parseInt(a[sortKey].value) : a[sortKey].value
+									b = type == "Number" ? parseInt(b[sortKey].value) : b[sortKey].value
+									return (a === b ? 0 : a > b ? 1 : -1) * order
+								});
+							}
+
+							if (this.currentPage >= this.totalPages)
+							{
+				        this.currentPage = Math.max(0, this.totalPages - 1);
+				      }
+							var index = this.currentPage * this.itemsPerPage;
+
+							data = data.slice(index, index + this.itemsPerPage);
+
+							return data
+				    },
+						totalPages: function()
+						{
+							return Math.ceil(this.resultCount / this.itemsPerPage);
+						},
+						footer: function()
+						{
+							this.showup_footer.background= this.colour
+							this.showup_footer.border=" 1px solid "+this.colour
+							return this.showup_footer
+						},
+
+						heading: function()
+						{
+							this.showup_filter.background= this.colour
+							 return this.showup_filter
+						}
+				 },
+				 methods:
+				 {
+					 setPage: function(pageNumber) {
+			       this.currentPage = pageNumber;
+			     },
+					 change: function(value)
+					 {
+						 //console.log("change " + value);
+					 },
+					 sortBy: function (key, type)
+					 {
+				    this.sortKey = key
+						this.type = type
+				    this.sortOrders[key] = this.sortOrders[key] * -1
+				   },
+					 Edit: function(dato)
+					 {
+						 dato.txt  = (dato.txt ? false : true);
+						 dato.span = (dato.span ? false : true);
+					 }
+				 }
+		  });
+
+	    Vue.component("showup-textbox" ,{
+				 template : '#txtMain',
+	     	 props: {
+						 content: Object,
+						 row: Object
+					},
+					methods:
+					{
+						leave: function(dato, field , _evt)
+						{
+							var oldNit = dato.value;
+							if( _evt.path[0].value.trim()  )
+							{
+								 dato.value = this.TypeValidation(field.Type, _evt.path[0].value) ? _evt.path[0].value : oldNit;
+							}
+							else
+							{
+								 dato.value = oldNit;
+							}
+							dato.txt  = (dato.txt ? false : true);
+							dato.span = (dato.span ? false : true);
+						},
+						NewData: function(dato , field ,_evt)
+						{
+							//console.log(field);
+							if( !this.TypeValidation( field.Type , _evt.path[0].value ) )
+							{
+								alert("Solo se permiten números");
+							}
+						},
+						TypeValidation: function(type , dato)
+						{
+								 if( type == "Number" )
+								 {
+										 return isNaN( dato ) ? false : true;
+								 }
+								 else if( type == "String" )
+								 {
+										return typeof dato == "string" ? true : false;
+								 }
+						}
+					}
+      });
+
+		  var Showup = new Vue({
+
+            el: '#tblMain',
+
+            data :
+						{
+                Nombre: "DataGrid Edit VueJS App",
+
+								Colour: "#2980b9",
+
+                Columns: [
+			            {value: "CustNum", short: true, Type: "Number",filter : true},
+								  {value: "Nit", short: false, Type: "Number",filter : true},
+									{value: "Nombre", short: false, Type: "String",filter : true},
+								  {value: "Apellido", short: false , Type: "String",filter : true}
+								],
+
+            	  UserRegister: [
+                  {
+                    CustNum: {value : 1, span : true} ,
+                  	Nit: { value: 1035415, txt: false, span: true } ,
+                  	Nombre: { value: "Diego", txt: false, span: true } ,
+                  	Apellido: { value: "Rojas", txt: false, span: true }
+                  },
+                  {
+                  	CustNum: {value: 2, span: true} ,
+                  	Nit: { value: 8888888, txt: false, span: true } ,
+                  	Nombre: { value: "Manolo", txt: false, span: true },
+                  	Apellido: { value: "Rios", txt: false, span: true }
+                  },
+                  {
+                  	CustNum: {value: 3, span: true} ,
+                  	Nit: { value: 9999999, txt: false, span: true } ,
+                  	Nombre: { value: "Tori", txt: false, span: true } ,
+                  	Apellido: { value: "Rios", txt: false, span: true }
+                  },
+									{
+                  	CustNum: {value: 4, span: true} ,
+                  	Nit: { value: 1122334, txt: false, span: true } ,
+                  	Nombre: { value: "Stephy", txt: false, span: true } ,
+                  	Apellido: { value: "Guerra", txt: false, span: true }
+                  },
+									{
+                  	CustNum: {value: 5, span: true} ,
+                  	Nit: { value: 5566778, txt: false, span: true } ,
+                  	Nombre: { value: "Santi", txt: false, span: true } ,
+                  	Apellido: { value: "Blanko", txt: false, span: true }
+                  }
+            	  ]
+            }
+		 });
+	</script>
+</body>
+</html>
