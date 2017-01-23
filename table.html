@@ -51,7 +51,7 @@
 				<div style="float:left;">
 					Mostrar
 					 <select v-model="itemsPerPage" @change="change(itemsPerPage)">
-						 <option value="4">4</option>
+						 <option value="10">10</option>
 						 <option value="25">25</option>
 						 <option value="100">100</option>
 						 <option value="10000">All</option>
@@ -80,7 +80,7 @@
 						 	 <tr v-if="filteredData.length > 0" v-for="data in filteredData">
 			            <td v-for="(key , index) in columns" :id="'row_'+index" :class="'app-'+(key.short ? 'row' : 'active')">
 			                <span v-show="data[key.value].span" @click="Edit(data[key.value])">
-											  {{ data[key.value].value }}
+											  {{ data[key.value].value | capitalize }}
 										  </span>
 										  <showup-textbox :content="data" :row="key"></showup-textbox>
 									</td>
@@ -141,7 +141,7 @@
 						 sortOrders: sortOrders,
 						 currentPage: 0,
 						 filterKey: '',
-						 itemsPerPage: 4,
+						 itemsPerPage: 10,
 						 resultCount: 0,
 						 "showup_footer":
 						 {
@@ -169,9 +169,9 @@
 							 overflow: 'hidden',
 						 },
 					   }
-				 },
-				 computed:
-				 {
+				  },
+				  computed:
+				  {
 				    filteredData: function ()
 						{
 							// Sorter
@@ -224,8 +224,8 @@
 							 return this.showup_filter
 						}
 				 },
-				 methods:
-				 {
+				  methods:
+				  {
 					 setPage: function(pageNumber) {
 			       this.currentPage = pageNumber;
 			     },
@@ -244,7 +244,15 @@
 						 dato.txt  = (dato.txt ? false : true);
 						 dato.span = (dato.span ? false : true);
 					 }
-				 }
+				 },
+				 filters:
+				 {
+			    capitalize: function (value) {
+			      if (!value) return ''
+			      value = value.toString()
+			      return value.charAt(0).toUpperCase() + value.slice(1)
+			    }
+			  }
 		  });
 
 	    Vue.component("showup-textbox" ,{
@@ -304,7 +312,7 @@
 						{
 						   consultToAPI: function()
 							 {
-								  this.$http.get('https://randomuser.me/api/?results=20&nat=es').then(function(data)
+								  this.$http.get('https://randomuser.me/api/?results=100&nat=es').then(function(data)
 									{
 										for(var user in data.body.results)
 										{
