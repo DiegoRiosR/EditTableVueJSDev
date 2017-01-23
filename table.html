@@ -3,6 +3,7 @@
 <head>
 	<title>Table VueJS</title>
 	<script type="text/javascript"  src="js/vue.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.0.3/vue-resource.min.js"></script>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/main.css">
 </head>
@@ -294,6 +295,32 @@
 
             el: '#tblMain',
 
+						created: function()
+						{
+              this.consultToAPI();
+						},
+
+						methods:
+						{
+						   consultToAPI: function()
+							 {
+								  this.$http.get('https://randomuser.me/api/?results=20&nat=es').then(function(data)
+									{
+										for(var user in data.body.results)
+										{
+											var NewUser =
+											{
+													CustNum: {value : parseInt(user) + 1, span : true} ,
+													Nit: { value: data.body.results[user].id.value, txt: false, span: true } ,
+													Nombre: { value: data.body.results[user].name.first, txt: false, span: true } ,
+													Apellido: { value: data.body.results[user].name.last, txt: false, span: true }
+											}
+											this.UserRegister.push( NewUser );
+									  }
+									});
+							 }
+						},
+
             data :
 						{
                 Nombre: "DataGrid Edit VueJS App",
@@ -308,36 +335,36 @@
 								],
 
             	  UserRegister: [
-                  {
-                    CustNum: {value : 1, span : true} ,
-                  	Nit: { value: 1035415, txt: false, span: true } ,
-                  	Nombre: { value: "Diego", txt: false, span: true } ,
-                  	Apellido: { value: "Rojas", txt: false, span: true }
-                  },
-                  {
-                  	CustNum: {value: 2, span: true} ,
-                  	Nit: { value: 8888888, txt: false, span: true } ,
-                  	Nombre: { value: "Manolo", txt: false, span: true },
-                  	Apellido: { value: "Rios", txt: false, span: true }
-                  },
-                  {
-                  	CustNum: {value: 3, span: true} ,
-                  	Nit: { value: 9999999, txt: false, span: true } ,
-                  	Nombre: { value: "Tori", txt: false, span: true } ,
-                  	Apellido: { value: "Rios", txt: false, span: true }
-                  },
-									{
-                  	CustNum: {value: 4, span: true} ,
-                  	Nit: { value: 1122334, txt: false, span: true } ,
-                  	Nombre: { value: "Stephy", txt: false, span: true } ,
-                  	Apellido: { value: "Guerra", txt: false, span: true }
-                  },
-									{
-                  	CustNum: {value: 5, span: true} ,
-                  	Nit: { value: 5566778, txt: false, span: true } ,
-                  	Nombre: { value: "Santi", txt: false, span: true } ,
-                  	Apellido: { value: "Blanko", txt: false, span: true }
-                  }
+                  // {
+                  //   CustNum: {value : 1, span : true} ,
+                  // 	Nit: { value: 1035415, txt: false, span: true } ,
+                  // 	Nombre: { value: "Diego", txt: false, span: true } ,
+                  // 	Apellido: { value: "Rojas", txt: false, span: true }
+                  // },
+                  // {
+                  // 	CustNum: {value: 2, span: true} ,
+                  // 	Nit: { value: 8888888, txt: false, span: true } ,
+                  // 	Nombre: { value: "Manolo", txt: false, span: true },
+                  // 	Apellido: { value: "Rios", txt: false, span: true }
+                  // },
+                  // {
+                  // 	CustNum: {value: 3, span: true} ,
+                  // 	Nit: { value: 9999999, txt: false, span: true } ,
+                  // 	Nombre: { value: "Tori", txt: false, span: true } ,
+                  // 	Apellido: { value: "Rios", txt: false, span: true }
+                  // },
+									// {
+                  // 	CustNum: {value: 4, span: true} ,
+                  // 	Nit: { value: 1122334, txt: false, span: true } ,
+                  // 	Nombre: { value: "Stephy", txt: false, span: true } ,
+                  // 	Apellido: { value: "Guerra", txt: false, span: true }
+                  // },
+									// {
+                  // 	CustNum: {value: 5, span: true} ,
+                  // 	Nit: { value: 5566778, txt: false, span: true } ,
+                  // 	Nombre: { value: "Santi", txt: false, span: true } ,
+                  // 	Apellido: { value: "Blanko", txt: false, span: true }
+                  // }
             	  ]
             }
 		 });
