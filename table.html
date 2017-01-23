@@ -80,7 +80,7 @@
 						 	 <tr v-if="filteredData.length > 0" v-for="data in filteredData">
 			            <td v-for="(key , index) in columns" :id="'row_'+index" :class="'app-'+(key.short ? 'row' : 'active')">
 			                <span v-show="data[key.value].span" @click="Edit(data[key.value])">
-											  {{ data[key.value].value | capitalize }}
+											  {{ data[key.value].value }}
 										  </span>
 										  <showup-textbox :content="data" :row="key"></showup-textbox>
 									</td>
@@ -224,8 +224,8 @@
 							 return this.showup_filter
 						}
 				 },
-				  methods:
-				  {
+				 methods:
+				 {
 					 setPage: function(pageNumber) {
 			       this.currentPage = pageNumber;
 			     },
@@ -245,14 +245,11 @@
 						 dato.span = (dato.span ? false : true);
 					 }
 				 },
-				 filters:
-				 {
-			    capitalize: function (value) {
-			      if (!value) return ''
-			      value = value.toString()
-			      return value.charAt(0).toUpperCase() + value.slice(1)
-			    }
-			  }
+				 filters: {
+					capitalize: function (str) {
+						return str.charAt(0).toUpperCase() + str.slice(1)
+					}
+				}
 		  });
 
 	    Vue.component("showup-textbox" ,{
