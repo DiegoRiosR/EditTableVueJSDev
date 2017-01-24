@@ -25,6 +25,7 @@
 							<option value="#ea6153">Red</option>
 							<option value="#f39c12">Orange</option>
 							<option value="#2980b9">Blue</option>
+							<option value="0">BootStrap</option>
 						</select>
 			   </div>
 	   </div>
@@ -63,7 +64,7 @@
 				</div>
       </div>
 			<div class="">
-					<table class="table table-bordered table-hover table-striped showup-table">
+					<table class="table table-bordered table-hover table-striped showup-table" style="margin-bottom: 0px;">
 				 		<thead>
 				 				<tr style="border: 1px solid #42b983;">
 				 					 <th v-for="column in columns"
@@ -91,8 +92,8 @@
 						 </tbody>
 			 	  </table>
 				</div>
-				<div class="">
-					<div class="text-right" :style="footer">
+				<div style="background: rgb(41, 128, 185);color: rgba(255, 255, 255, 0.658824);height: 39px;padding: 13px;overflow: hidden;">
+					<div :style="footer" style="float: right">
 						<nav aria-label="Page navigation">
 						 <ul class="pagination pagination-sm">
 							   <li v-for="page in totalPages" :class="{active: currentPage == page - 1}">
@@ -102,6 +103,11 @@
 								 </li>
 						 </ul>
 					 </nav>
+					</div>
+					<div style="float:left">
+						 showing {{  currentPage == 0  ? 1 : (filteredData.length * currentPage) + 1 }} to
+						 {{ currentPage == 0 ? itemsPerPage : (itemsPerPage * (currentPage + 1)) }} of {{ data.length }}
+						 entries
 					</div>
 				</div>
 		</div>
@@ -215,13 +221,18 @@
 						{
 							this.showup_footer.background= this.colour
 							this.showup_footer.border=" 1px solid "+this.colour
-							return this.showup_footer
+
+							return ( this.colour == "0" ? "" : this.showup_footer)
 						},
 
 						heading: function()
 						{
-							this.showup_filter.background= this.colour
-							 return this.showup_filter
+							if(this.colour != "0")
+							  this.showup_filter.background= this.colour
+							else {
+								this.showup_filter.color = "black"
+							}
+							 return ( this.colour == "0" ? "" : this.showup_filter)
 						}
 				 },
 				 methods:
@@ -339,38 +350,7 @@
 								  {value: "Apellido", short: false , Type: "String",filter : true}
 								],
 
-            	  UserRegister: [
-                  // {
-                  //   CustNum: {value : 1, span : true} ,
-                  // 	Nit: { value: 1035415, txt: false, span: true } ,
-                  // 	Nombre: { value: "Diego", txt: false, span: true } ,
-                  // 	Apellido: { value: "Rojas", txt: false, span: true }
-                  // },
-                  // {
-                  // 	CustNum: {value: 2, span: true} ,
-                  // 	Nit: { value: 8888888, txt: false, span: true } ,
-                  // 	Nombre: { value: "Manolo", txt: false, span: true },
-                  // 	Apellido: { value: "Rios", txt: false, span: true }
-                  // },
-                  // {
-                  // 	CustNum: {value: 3, span: true} ,
-                  // 	Nit: { value: 9999999, txt: false, span: true } ,
-                  // 	Nombre: { value: "Tori", txt: false, span: true } ,
-                  // 	Apellido: { value: "Rios", txt: false, span: true }
-                  // },
-									// {
-                  // 	CustNum: {value: 4, span: true} ,
-                  // 	Nit: { value: 1122334, txt: false, span: true } ,
-                  // 	Nombre: { value: "Stephy", txt: false, span: true } ,
-                  // 	Apellido: { value: "Guerra", txt: false, span: true }
-                  // },
-									// {
-                  // 	CustNum: {value: 5, span: true} ,
-                  // 	Nit: { value: 5566778, txt: false, span: true } ,
-                  // 	Nombre: { value: "Santi", txt: false, span: true } ,
-                  // 	Apellido: { value: "Blanko", txt: false, span: true }
-                  // }
-            	  ]
+            	  UserRegister: [ ]
             }
 		 });
 	</script>
